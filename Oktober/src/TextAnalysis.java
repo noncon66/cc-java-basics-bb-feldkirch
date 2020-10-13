@@ -1,5 +1,5 @@
 public class TextAnalysis {
-    private final static String text = "Zur Zeit des Zweiten Weltkriegs waren seine großen Werke Siddhartha und Der Steppenwolf noch verboten. Heute gehört Hermann Hesse zu den bekanntesten deutschen Schriftstellern. Mehr über den Weltveränderer lest ihr hier\n" +
+    private final static String text = "Zur ZEIT des Zweiten Weltkriegs waren seine großen Werke Siddhartha und Der Steppenwolf noch verboten. Heute gehört Hermann Hesse zu den bekanntesten deutschen Schriftstellern. Mehr über den Weltveränderer lest ihr hier\n" +
             "Hermann Hesse\n" +
             "\n" +
             "Hermann Hesse erhielt den Nobelpreis für Literatur\n" +
@@ -69,66 +69,165 @@ public class TextAnalysis {
 
 
     public static void main(String[] args) {
-        //Textcleaning
-        String cleanedText = text.replaceAll("\\s", " ");
-        cleanedText = cleanedText.replaceAll("[ ]{1,}", " ");
-        System.out.println(cleanedText);
+
+        System.out.println("Anzahl der Zeichen im Text: " + text.length());
+        //normalize text
+        String normalizedText = getNormalizedText(text);
+        System.out.println(normalizedText);
 
 
-        System.out.println("Anzahl der Zeichen im Text: " + cleanedText.length());
-        System.out.println("Anzahl der sichtbaren Zeichen im Text: " + cleanedText.replaceAll("\\s", "").length());
-        String[] wordsFromText = cleanedText.split("\\s");
-        System.out.println("Anzahl der Wörter im Text: " + wordsFromText.length);
+        System.out.println("Anzahl der sichtbaren Zeichen im Text: " + getNumberOfAlphanumericCharacters(normalizedText));
 
-        int logestWordAt = getLongestWordAt(wordsFromText);
-        System.out.println("Längstes Wort ist \"" + wordsFromText[logestWordAt] + "\"");
+        System.out.println("Anzahl der Wörter im Text: " + getNumberOfWords(normalizedText));
 
-        int shortestWordAt = getShortestWordAt(wordsFromText);
-        System.out.println("Kürzestes Wort ist \"" + wordsFromText[shortestWordAt] + "\"");
+        System.out.println("Längstes Wort ist \"" + getLongestWord(normalizedText) + "\"");
+
+        System.out.println("Kürzestes Wort ist \"" + getShortestWord(normalizedText) + "\"");
 
         String wordToCount = "Hesse";
-        int howOften = getNumberOfSpecificWord(wordToCount, wordsFromText);
-        System.out.println("Das Wort \"" + wordToCount + "\" kommt " + howOften + " mal vor");
+        System.out.println("Das Wort \"" + wordToCount + "\" kommt " + getNumberOfSpecificWord(wordToCount, normalizedText) + " mal vor");
 
-        //wordsFromText[1].matches("[A-Z]")
+        System.out.println("Wörter aus Großbuchstaben: " + getNumberOfUppercase(normalizedText));
+
+        System.out.println("Wörter aus Kleinbuchstaben: " + getNumberOfLowercase(normalizedText));
 
     }
 
+    /***
+     * Returns the number of upper case words
+     * @param text
+     * @return number of upper case words
+     */
+    private static int getNumberOfUppercase(String text) {
+        int counter = 0;
+        var words = text.split(" ");
+        for (var word : words) {
+            if (word.matches("[A-ZÖÜÄ]*")) {
+                counter++;
+            }
+        }
+        return counter;
 
-    private static Integer getLongestWordAt(String[] wordsFromText) {
-        int logestWordAt = 0;
+    }
+
+    /***
+     * Returns the number of lower case words
+     * @param text
+     * @return number of lower case words
+     */
+    private static int getNumberOfLowercase(String text) {
+        int counter = 0;
+        var words = text.split(" ");
+        for (var word : words) {
+            if (word.matches("[a-zöüäß]*")) {
+                counter++;
+            }
+        }
+        return counter;
+
+    }
+
+    /***
+     * Returns a normalized text without
+     * special characters (\s), Punctuation marks (.,;:?!_()")
+     * and multiple spaces
+     * @param text
+     * @return normalized text
+     */
+    private static String getNormalizedText(String text) {
+        text = text.replaceAll("\\s", " ");
+        text = text.replaceAll("[.,;:?!_()\"]", " ");
+        text = text.replaceAll("[ ]{1,}", " ");
+        return text;
+    }
+
+    /***
+     * Returns the longest word in a text
+     * @param text
+     * @return longest word
+     */
+    private static String getLongestWord(String text) {
+        String longestWord = null;
         int wordLength = 0;
-        for (int i = 0; i < wordsFromText.length; i++) {
-            if (wordLength < wordsFromText[i].length()) {
-                wordLength = wordsFromText[i].length();
-                logestWordAt = i;
+        var words = text.split(" ");
+        for (var word : words) {
+            if (wordLength < word.length()) {
+                wordLength = word.length();
+                longestWord = word;
             }
         }
-        return logestWordAt;
+        return longestWord;
     }
 
-    private static Integer getShortestWordAt(String[] wordsFromText) {
-        int shortestWordAt = 0;
+    /***
+     * Returns the shortest word in a text
+     * @param text
+     * @return longest word
+     */
+    private static String getShortestWord(String text) {
+        String shortestWord = null;
         int wordLength = Integer.MAX_VALUE;
-        for (int i = 0; i < wordsFromText.length; i++) {
-            if (wordLength > wordsFromText[i].length()) {
-                wordLength = wordsFromText[i].length();
-                shortestWordAt = i;
+        var words = text.split(" ");
+        for (var word : words) {
+            if (wordLength > word.length() && word.matches("[A-Za-zÖÜÄöüäß]*")) {
+                wordLength = word.length();
+                shortestWord = word;
             }
         }
-        return shortestWordAt;
+        return shortestWord;
     }
 
-    private static int getNumberOfSpecificWord(String word, String[] wordsFromText) {
+    /***
+     * Returns the number of occurences of a specific word
+     * @param Word to search for, text to search in
+     * @return occurences
+     */
+    private static int getNumberOfSpecificWord(String wordToSearch, String text) {
         int numberOfSpecificWord = 0;
-
-        for (int i = 0; i < wordsFromText.length; i++) {
-            if (word.contains(wordsFromText[i])) {
+        var words = text.split(" ");
+        for (var word : words) {
+            if (wordToSearch.equals(word)) {
                 numberOfSpecificWord++;
             }
         }
 
         return numberOfSpecificWord;
     }
+
+    /***
+     * Returns the number of alphanumeric characters [A-Za-z0-9ÖÜÄöüäß]
+     * @param text
+     * @return number of characters
+     */
+    private static int getNumberOfAlphanumericCharacters(String text) {
+        int NumberOfAlphanumericCharacters = 0;
+        char[] characters = text.toCharArray();
+        for (var character : characters) {
+            String strChar = "" + character + "";
+            if (strChar.matches("[A-Za-z0-9ÖÜÄöüäß]*")) {
+                NumberOfAlphanumericCharacters++;
+            }
+        }
+
+        return NumberOfAlphanumericCharacters;
+    }
+
+    /***
+     * Returns the number of words
+     * @param text
+     * @return number of words
+     */
+    private static int getNumberOfWords(String text) {
+        int numberOfWords = 0;
+        var words = text.split(" ");
+        for (var word : words) {
+            if (word.matches("[A-Za-zÖÜÄöüäß]*")) {
+                numberOfWords++;
+            }
+        }
+
+        return numberOfWords;
+    }
+
 
 }
