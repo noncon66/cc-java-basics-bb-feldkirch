@@ -84,11 +84,13 @@ public class TextAnalysis {
         System.out.println("Längstes Wort ist \"" + wordsFromText[logestWordAt] + "\"");
 
         int shortestWordAt = getShortestWordAt(wordsFromText);
-        System.out.println("Längstes Wort ist \"" + wordsFromText[shortestWordAt] + "\"");
+        System.out.println("Kürzestes Wort ist \"" + wordsFromText[shortestWordAt] + "\"");
 
         String wordToCount = "Hesse";
         int howOften = getNumberOfSpecificWord(wordToCount, wordsFromText);
         System.out.println("Das Wort \"" + wordToCount + "\" kommt " + howOften + " mal vor");
+
+        //wordsFromText[1].matches("[A-Z]")
 
     }
 
