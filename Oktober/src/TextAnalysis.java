@@ -75,29 +75,31 @@ public class TextAnalysis {
         System.out.println("Anzahl der Zeichen im Text: " + text.length());
         //normalize text
         String normalizedText = getNormalizedText(text);
-        System.out.println(normalizedText);
+        //System.out.println(normalizedText);
+        var words = normalizedText.split(" ");
 
+        String wordToCount = "Hesse";
 
         System.out.println("Anzahl der sichtbaren Zeichen im Text: " + getNumberOfAlphanumericCharacters(normalizedText));
 
         System.out.println("Anzahl der Wörter im Text: " + getNumberOfWords(normalizedText));
 
-        System.out.println("Längstes Wort ist \"" + getLongestWord(normalizedText) + "\"");
+        System.out.println("Längstes Wort ist \"" + getLongestWord(words) + "\"");
 
-        System.out.println("Kürzestes Wort ist \"" + getShortestWord(normalizedText) + "\"");
+        System.out.println("Kürzestes Wort ist \"" + getShortestWord(words) + "\"");
 
-        String wordToCount = "Hesse";
+
         System.out.println("Das Wort \"" + wordToCount + "\" kommt " + getNumberOfSpecificWord(wordToCount, normalizedText) + " mal vor");
 
         System.out.println("Wörter aus Großbuchstaben: " + getNumberOfUppercase(normalizedText));
 
         System.out.println("Wörter aus Kleinbuchstaben: " + getNumberOfLowercase(normalizedText));
 
-        System.out.println("Alphabetisch erstes Wort: " + getAplphabeticFirstWord(normalizedText));
+        System.out.println("Alphabetisch erstes Wort: " + getAplphabeticFirstWord(words));
 
-        System.out.println("Alphabetisch letztes Wort: " + getAplphabeticLastWord(normalizedText));
+        System.out.println("Alphabetisch letztes Wort: " + getAplphabeticLastWord(words));
 
-        System.out.println(Arrays.toString(getSortedArray(normalizedText)));
+        System.out.println(Arrays.toString(getSortedArray(words)));
 
     }
 
@@ -156,38 +158,32 @@ public class TextAnalysis {
 
     /***
      * Returns the longest word in a text
-     * @param text
+     * @param
      * @return longest word
      */
-    private static String getLongestWord(String text) {
-        String longestWord = null;
-        int wordLength = 0;
-        var words = text.split(" ");
+    private static String getLongestWord(String[] words) {
+        String bestWord = null;
+        if (words.length > 0) bestWord = words[0];
+        else bestWord = "leeres Array!!!!!";
         for (var word : words) {
-            if (wordLength < word.length()) {
-                wordLength = word.length();
-                longestWord = word;
+            if (bestWord.length() < word.length() && word.matches("[A-Za-zÖÜÄöüäß]*")) {
+                bestWord = word;
             }
         }
-        return longestWord;
+        return bestWord;
     }
 
-    /***
-     * Returns the shortest word in a text
-     * @param text
-     * @return longest word
-     */
-    private static String getShortestWord(String text) {
-        String shortestWord = null;
-        int wordLength = Integer.MAX_VALUE;
-        var words = text.split(" ");
+
+    private static String getShortestWord(String[] words) {
+        String bestWord = null;
+        if (words.length > 0) bestWord = words[0];
+        else bestWord = "leeres Array!!!!";
         for (var word : words) {
-            if (wordLength > word.length() && word.matches("[A-Za-zÖÜÄöüäß]*")) {
-                wordLength = word.length();
-                shortestWord = word;
+            if (bestWord.length() > word.length() && word.matches("[A-Za-zÖÜÄöüäß]*")) {
+                bestWord = word;
             }
         }
-        return shortestWord;
+        return bestWord;
     }
 
     /***
@@ -238,90 +234,64 @@ public class TextAnalysis {
                 numberOfWords++;
             }
         }
-
         return numberOfWords;
     }
 
-    private static String getAplphabeticFirstWord(String text) {
-        text = text
-                .replaceAll("[Ää]", "ae")
-                .replaceAll("[Öö]", "oe")
-                .replaceAll("[Üü]", "ue")
-                .replaceAll("[ß]", "ss");
-        var words = text.split(" ");
-        for (int i = 0; i < words.length - 1; i++) {
-            if (words[i].compareTo(words[i + 1]) < 0) {
-                String buffer = words[i];
-                words[i] = words[i + 1];
-                words[i + 1] = buffer;
+    private static String getAplphabeticFirstWord(String[] words) {
+        String buffer = null;
+        if (words.length > 0) buffer = words[0];
+        else buffer = "leeres Array";
+        for (var word : words) {
+            if (toLowerAscii(buffer).compareTo(toLowerAscii(word)) > 0) {
+                buffer = word;
             }
         }
-        return words[words.length - 1];
+        return buffer;
     }
 
 
-    private static String getAplphabeticLastWord(String text) {
-        text = text
-                .replaceAll("[Ää]", "ae")
-                .replaceAll("[Öö]", "oe")
-                .replaceAll("[Üü]", "ue")
-                .replaceAll("[ß]", "ss");
-        var words = text.split(" ");
-        for (int i = 0; i < words.length - 1; i++) {
-            if (words[i].compareTo(words[i + 1]) > 0) {
-                String buffer = words[i];
-                words[i] = words[i + 1];
-                words[i + 1] = buffer;
+    private static String getAplphabeticLastWord(String[] words) {
+        String buffer = null;
+        if (words.length > 0) buffer = words[0];
+        else buffer = "leeres Array";
+        for (var word : words) {
+            if (toLowerAscii(buffer).compareTo(toLowerAscii(word)) < 0) {
+                buffer = word;
             }
         }
-        return words[words.length - 1];
+        return buffer;
     }
 
 
-    private static String[] getSortedArray(String text) {
-        text = text
-                .replaceAll("[Ää]", "ae")
-                .replaceAll("[Öö]", "oe")
-                .replaceAll("[Üü]", "ue")
-                .replaceAll("[ß]", "ss").toLowerCase();
-        var words = text.split(" ");
+    private static String[] getSortedArray(String[] words) {
+
+        //Kopie vom Array erstellen damit nicht das ursprüngliche Array umsortiert wird
+        var wordsToSort = Arrays.copyOf(words, words.length);
         //Bubblesort
-        for (int j = 0; j < words.length; j++) {
-            for (int i = 0; i < words.length - 1 - j; i++) {
-                if (words[i].length() > words[i + 1].length()) {
-                    String buffer = words[i];
-                    words[i] = words[i + 1];
-                    words[i + 1] = buffer;
-                } else if (words[i].length() == words[i + 1].length() && words[i].compareTo(words[i + 1]) > 0) {
-                    String buffer = words[i];
-                    words[i] = words[i + 1];
-                    words[i + 1] = buffer;
+        for (int j = 0; j < wordsToSort.length; j++) {
+            for (int i = 0; i < wordsToSort.length - 1 - j; i++) {
+                //sortiert nach Länge
+                if ((wordsToSort[i].length() > wordsToSort[i + 1].length()) ||
+                        //wenn gleich lang, nach Alphabet
+                        (wordsToSort[i].length() == wordsToSort[i + 1].length() &&
+                                (toLowerAscii(wordsToSort[i]).compareTo(toLowerAscii(wordsToSort[i + 1]))) > 0)) {
+                    String buffer = wordsToSort[i];
+                    wordsToSort[i] = wordsToSort[i + 1];
+                    wordsToSort[i + 1] = buffer;
                 }
             }
         }
-
-        return words;
+        return wordsToSort;
     }
 
-
-/*
-    private static String[] getSortedArray(String[] students) {
-
-        String[] studentsSorted = java.util.Arrays.copyOf(students, students.length);
-
-        for (int j = 0; j < studentsSorted.length; j++) {
-            for (int i = 0; i < studentsSorted.length - 1 - j; i++) {
-                if (studentsSorted[i].compareTo(studentsSorted[i + 1]) > 0) {  //Paar umdrehen
-                    String temp = studentsSorted[i];
-                    studentsSorted[i] = studentsSorted[i + 1];
-                    studentsSorted[i + 1] = temp;
-
-                }
-            }
-        }
-        return studentsSorted;
+    private static String toLowerAscii(String word) {
+        return word
+                //alles klein weil .compareTo casesensitive ist
+                .toLowerCase()
+                //Umlaute umwandeln, da .compareTo Umlaute falsch sotiert ist
+                .replaceAll("[ä]", "a")
+                .replaceAll("[ö]", "o")
+                .replaceAll("[ü]", "u")
+                .replaceAll("[ß]", "ss");
     }
- */
-
-
 }
