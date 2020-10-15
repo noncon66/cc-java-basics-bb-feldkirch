@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class TextAnalysis {
     private final static String text = "Zur ZEIT des Zweiten Weltkriegs waren seine großen Werke Siddhartha und Der Steppenwolf noch verboten. Heute gehört Hermann Hesse zu den bekanntesten deutschen Schriftstellern. Mehr über den Weltveränderer lest ihr hier\n" +
             "Hermann Hesse\n" +
@@ -91,7 +93,31 @@ public class TextAnalysis {
 
         System.out.println("Wörter aus Kleinbuchstaben: " + getNumberOfLowercase(normalizedText));
 
+        System.out.println("Alphabetisch erstes Wort: " + getAplphabeticFirstWord(normalizedText));
+
+        System.out.println("Alphabetisch letztes Wort: " + getAplphabeticLastWord(normalizedText));
+
+        System.out.println(Arrays.toString(getSortedArray(normalizedText)));
+
     }
+
+    /***
+     * Returns a normalized text without
+     * special characters (\s), Punctuation marks (.,;:?!_()")
+     * and multiple spaces
+     * @param
+     * @return normalized text
+     */
+    private static String getNormalizedText(String originalText) {
+
+        return originalText
+                .replaceAll("\\s", " ")
+                .replaceAll("[^a-zA-ZÖÄÜöäüß]", " ") //ersetzt alles durch " " außer [^a-zA-ZÖÄÜöäüß]
+                .replaceAll("[ ]+", " ");
+
+        //normalizedText = normalizedText.replaceAll("[.,;:?!_()\"]", " ");
+    }
+
 
     /***
      * Returns the number of upper case words
@@ -127,19 +153,6 @@ public class TextAnalysis {
 
     }
 
-    /***
-     * Returns a normalized text without
-     * special characters (\s), Punctuation marks (.,;:?!_()")
-     * and multiple spaces
-     * @param text
-     * @return normalized text
-     */
-    private static String getNormalizedText(String text) {
-        text = text.replaceAll("\\s", " ");
-        text = text.replaceAll("[.,;:?!_()\"]", " ");
-        text = text.replaceAll("[ ]{1,}", " ");
-        return text;
-    }
 
     /***
      * Returns the longest word in a text
@@ -179,7 +192,7 @@ public class TextAnalysis {
 
     /***
      * Returns the number of occurences of a specific word
-     * @param Word to search for, text to search in
+     * @param
      * @return occurences
      */
     private static int getNumberOfSpecificWord(String wordToSearch, String text) {
@@ -228,6 +241,87 @@ public class TextAnalysis {
 
         return numberOfWords;
     }
+
+    private static String getAplphabeticFirstWord(String text) {
+        text = text
+                .replaceAll("[Ää]", "ae")
+                .replaceAll("[Öö]", "oe")
+                .replaceAll("[Üü]", "ue")
+                .replaceAll("[ß]", "ss");
+        var words = text.split(" ");
+        for (int i = 0; i < words.length - 1; i++) {
+            if (words[i].compareTo(words[i + 1]) < 0) {
+                String buffer = words[i];
+                words[i] = words[i + 1];
+                words[i + 1] = buffer;
+            }
+        }
+        return words[words.length - 1];
+    }
+
+
+    private static String getAplphabeticLastWord(String text) {
+        text = text
+                .replaceAll("[Ää]", "ae")
+                .replaceAll("[Öö]", "oe")
+                .replaceAll("[Üü]", "ue")
+                .replaceAll("[ß]", "ss");
+        var words = text.split(" ");
+        for (int i = 0; i < words.length - 1; i++) {
+            if (words[i].compareTo(words[i + 1]) > 0) {
+                String buffer = words[i];
+                words[i] = words[i + 1];
+                words[i + 1] = buffer;
+            }
+        }
+        return words[words.length - 1];
+    }
+
+
+    private static String[] getSortedArray(String text) {
+        text = text
+                .replaceAll("[Ää]", "ae")
+                .replaceAll("[Öö]", "oe")
+                .replaceAll("[Üü]", "ue")
+                .replaceAll("[ß]", "ss").toLowerCase();
+        var words = text.split(" ");
+        //Bubblesort
+        for (int j = 0; j < words.length; j++) {
+            for (int i = 0; i < words.length - 1 - j; i++) {
+                if (words[i].length() > words[i + 1].length()) {
+                    String buffer = words[i];
+                    words[i] = words[i + 1];
+                    words[i + 1] = buffer;
+                } else if (words[i].length() == words[i + 1].length() && words[i].compareTo(words[i + 1]) > 0) {
+                    String buffer = words[i];
+                    words[i] = words[i + 1];
+                    words[i + 1] = buffer;
+                }
+            }
+        }
+
+        return words;
+    }
+
+
+/*
+    private static String[] getSortedArray(String[] students) {
+
+        String[] studentsSorted = java.util.Arrays.copyOf(students, students.length);
+
+        for (int j = 0; j < studentsSorted.length; j++) {
+            for (int i = 0; i < studentsSorted.length - 1 - j; i++) {
+                if (studentsSorted[i].compareTo(studentsSorted[i + 1]) > 0) {  //Paar umdrehen
+                    String temp = studentsSorted[i];
+                    studentsSorted[i] = studentsSorted[i + 1];
+                    studentsSorted[i + 1] = temp;
+
+                }
+            }
+        }
+        return studentsSorted;
+    }
+ */
 
 
 }
