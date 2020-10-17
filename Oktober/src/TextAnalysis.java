@@ -183,7 +183,23 @@ public class TextAnalysis {
                 bestWord = word;
             }
         }
-        return bestWord;
+
+        //Aufgabe: alle kürzesten Wörter ausgeben
+        int bestWordLength = bestWord.length();
+        boolean isFirstWord = true;
+        String bestWords = "";
+        for (var word : words){
+            if (word.length() == bestWordLength){
+                if(isFirstWord){
+                    isFirstWord = false;
+                } else {
+                    bestWords = bestWords + ", ";
+                }
+                bestWords = bestWords + word;
+            }
+
+        }
+        return bestWords;
     }
 
     /***
