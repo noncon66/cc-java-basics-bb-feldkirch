@@ -3,48 +3,39 @@ import java.util.Scanner;
 public class Waehrungsrechner {
 
     public static void main(String[] args) {
-        double amount = 0.0;
-        String currency = "";
-        double factor = 0.0;
-        double calcCurrency = 0.0;
+        double amount;
+        String currency;
+        double exchangeRate;
+        double calcCurrency;
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Bitte Betrag eingeben (Ganzahl):");
         amount = scanner.nextDouble();
 
         System.out.println("Währung oder Kurs eingeben:");
-        boolean isDouble = scanner.hasNextDouble();
+        boolean isDouble = scanner.hasNextDouble(); // prüft ob der Scanner einen Double enthält
         if (isDouble) {
-            factor = scanner.nextDouble();
-            calcCurrency = calculateCurrencyAmount(factor, amount);
+            exchangeRate = scanner.nextDouble();
+            calcCurrency = calculateCurrencyAmount(exchangeRate, amount);
         } else {
             currency = scanner.next();
             calcCurrency = calculateCurrencyAmount(currency, amount);
         }
-
         System.out.println("Betrag: " + calcCurrency);
     }
 
     public static double calculateCurrencyAmount(String currency, double amount) {
-        double factor = 0.0;
+        double exchangeRate = 0.0;
 
         switch (currency.toUpperCase()) {
-            case "CHF":
-                factor = 1.067;
-                break;
-            case "USD":
-                factor = 1.135;
-                break;
-            default:
-                System.err.println("Kenne die Währung nicht!");
-                break;
+            case "CHF" -> exchangeRate = 1.067;
+            case "USD" -> exchangeRate = 1.135;
+            default -> System.err.println("Kenne die Währung nicht!");
         }
-
-        return calculateCurrencyAmount(factor, amount);
+        return calculateCurrencyAmount(exchangeRate, amount);
     }
 
-    public static double calculateCurrencyAmount(double factor, double amount) {
-        return factor * amount;
+    public static double calculateCurrencyAmount(double exchangeRate, double amount) {
+        return exchangeRate * amount;
     }
-
 }
