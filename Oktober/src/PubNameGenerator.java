@@ -13,7 +13,5 @@ public class PubNameGenerator {
                     noun[random.nextInt(noun.length)] + " " +
                     type[random.nextInt(type.length)]);
         }
-
     }
-
 }
