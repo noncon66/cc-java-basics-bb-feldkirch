@@ -3,7 +3,8 @@ import java.util.Random;
 public class Wichteln {
 
     public static void main(String[] args) {
-        String[] names = {"Ali", "Erich", "Lukas", "Dan", "Klaus", "Bokhee", "Irene", "Sabrina"};
+        String[] names = {"Ali", "Erich", "Lukas", "Dan", "Klaus", "Bokhee", "Irene", "Sabrina", "Marsella","Michal",
+                "Samet", "Alex", "Gyula"};
         String[] assigned = new String[names.length];
         Random ramdom = new Random();
 
