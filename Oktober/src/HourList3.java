@@ -1,10 +1,16 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
+
 public class HourList3 {
 
     public static void main(String[] args) {
         String[][] hourList =
                 SimpleCSVReader.readCSV(
-                "C:\\Users\\DCV\\Klaus\\cc-java-basics-bb-feldkirch\\Oktober\\src\\Stunden.csv",
-                ",");;
+                        "C:\\Users\\DCV\\Klaus\\cc-java-basics-bb-feldkirch\\Oktober\\src\\Stunden.csv",
+                        ",");
+        ;
 
         int[] hoursSum = calculateHoursSum(hourList);
         int loanPerHour = 8;
@@ -14,8 +20,7 @@ public class HourList3 {
         float[] hoursAvg = calculateHoursAvg(hourList);
         printHoursAvg(hoursAvg);
 
-
-
+        System.out.println(Arrays.toString(getEmployeeList(hourList)));
 
 
     }
@@ -83,9 +88,44 @@ public class HourList3 {
                     break;
             }
 
-            hoursAvg[hoursAvgIndex] = (float) (hoursAvg[hoursAvgIndex]/2.0 + Integer.parseInt(entry[1])/2.0);
+            hoursAvg[hoursAvgIndex] = (float) (hoursAvg[hoursAvgIndex] / 2.0 + Integer.parseInt(entry[1]) / 2.0);
         }
         return hoursAvg;
+    }
+
+    private static String[] getEmployeeList(String[][] hourList) {
+        //erstellt neues Array mit den Namen; identisch mit der hourList
+        String[] names = new String[hourList.length - 1];
+        for (int i = 1; i < hourList.length; i++) {
+            names[i - 1] = hourList[i][0];
+        }
+        //löscht doppelte Werte aus dem Array
+        for (int i = 0; i < names.length - 1; i++) {
+            for (int j = i + 1; j < names.length; j++) {
+
+                if (names[i].equals(names[j])) {
+                    names[j] = "";
+                }
+            }
+        }
+        //zählt alle Werte aus Array die nicht leer sind ("Anzahl Mitarbeiter")
+        int numberOfEmployees = 0;
+        for (int i = 0; i < names.length; i++) {
+            if (!names[i].equals("")){
+                numberOfEmployees++;
+            }
+        }
+        //Erstellt neues Array von der Größe "Anzahl Mitarbeiter"
+        String[] employees = new String[numberOfEmployees];
+        //befüllt das Array mit den nicht leeren Felder aus dem alten Array "names"
+        int j = 0;
+        for (int i = 0; i < names.length; i++) {
+            if (!names[i].equals("")){
+                employees[j] = names[i];
+                j++;
+            }
+        }
+        return employees;
     }
 
     /*private static String[][] getHoursList() {
