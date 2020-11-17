@@ -6,11 +6,15 @@ import java.nio.file.StandardOpenOption;
 public class HourList3 {
 
     public static void main(String[] args)  {
+        String stdPath = "C:\\Users\\DCV\\Klaus\\cc-java-basics-bb-feldkirch\\Oktober\\src\\";
+        String readFileName = "Stunden.csv";
+                String writeFileName = "Lohn.csv";
+
         String[][] hourList =
                 new String[0][];
         try {
             hourList = CSVReaderWithList.getArrayFromFile(
-                    "C:\\Users\\DCV\\Klaus\\cc-java-basics-bb-feldkirch\\Oktober\\src\\Stunden.csv", 2,
+                    stdPath + readFileName, 2,
                     ",");
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen des Files: " +  e);
@@ -18,7 +22,12 @@ public class HourList3 {
 
         int hourSalry = 8;
 
-        printSummary(getHourDataToEmployeelist(hourList, getEmployeeList(hourList)), hourSalry);
+        String[][] employeeList = getHourDataToEmployeelist(hourList, getEmployeeList(hourList));
+
+        printSummary(employeeList, hourSalry);
+
+        saveArrayToFile(stdPath + writeFileName, employeeList, hourSalry );
+
 
 
     }
@@ -96,11 +105,12 @@ public class HourList3 {
         return employeeList;
     }
 
-    private static void saveArrayToFile(String filePath, String[][] employeeList) {
+    private static void saveArrayToFile(String filePath, String[][] employeeList, int hourSalry) {
         try {
             Files.createFile(Paths.get(filePath));
-            for (int i = 0; i < employees.length; i++) {
-                String line = employees[i] + "," + salary[i] + "\n";
+            for (int i = 0; i < employeeList.length; i++) {
+                int totalWage = Integer.parseInt(employeeList[i][1]) * hourSalry;
+                String line = employeeList[i][0] + "," + totalWage + "\n";
                 Files.write(Paths.get(filePath), line.getBytes(), StandardOpenOption.APPEND);
             }
         } catch (IOException e) {
