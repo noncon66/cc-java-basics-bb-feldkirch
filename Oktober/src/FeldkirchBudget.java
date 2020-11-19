@@ -7,15 +7,17 @@ public class FeldkirchBudget {
         String stdPath = "C:\\Users\\DCV\\Klaus\\cc-java-basics-bb-feldkirch\\Oktober\\src\\";
         String readFileName = "offenerhaushalt_fk_2019.csv";
         String seperator = ";";
-        String[][] budgetList = new String[0][];
+        String[][] budgetList = null;
 
         // Liste aus CSV importieren
         try {
             budgetList = GeneralCSVReader.getArrayFromFile(stdPath + readFileName, 3, seperator);
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen des Files: " + e);
+            System.exit(-1);
         }
         // Liste aufräumen
+
         String[][] cleanBudgetList = cleanList(budgetList);
 
         //Gesamtbudget
@@ -33,6 +35,12 @@ public class FeldkirchBudget {
         searchString = "Kindergarten";
         printSumAndShareForSearchString(cleanBudgetList, searchString);
 
+        searchString = "Feuerwehr";
+        printSumAndShareForSearchString(cleanBudgetList, searchString);
+
+        searchString = "";
+        printSumAndShareForSearchString(cleanBudgetList, searchString);
+
     }
 
     private static String[][] cleanList(String[][] budgetList) {
@@ -43,7 +51,7 @@ public class FeldkirchBudget {
             }
         }
 
-        String[][] newList = new String[rowCount][3]; //Erstellt neues Array in der richtigen Größe
+        String[][] newList = new String[rowCount][budgetList[0].length]; //Erstellt neues Array in der richtigen Größe
         rowCount = 0;
         for (int i = 1; i < budgetList.length; i++) { //Befüllt das neue Array
             if (Integer.parseInt(budgetList[i][2]) != 0 || !tryParseInt(budgetList[i][2])) {
@@ -77,8 +85,8 @@ public class FeldkirchBudget {
             }
         }
         System.out.println("Aufwände für " + Arrays.toString(searchArray) + ": EUR " + sumForSearchString);
-        shareOfTotal = (double) sumForSearchString / getTotalBudget(cleanBudgetList)*100;
-        System.out.println("das sind " + Math.round((shareOfTotal)*100)/100d + "% des Gesamtbudgets");
+        shareOfTotal = (double) sumForSearchString / getTotalBudget(cleanBudgetList) * 100;
+        System.out.println("das sind " + Math.round((shareOfTotal) * 100) / 100d + "% des Gesamtbudgets");
     }
 
 
